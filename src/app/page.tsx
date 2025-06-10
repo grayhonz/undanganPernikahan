@@ -1,103 +1,130 @@
+"use client";
+
+import { motion } from "framer-motion";
+import Countdown from "./components/Countdown"; // Pastikan file Countdown.tsx sudah ada
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <main className="font-serif text-gray-800">
+      {/* Hero Section */}
+      <section className="relative h-screen flex flex-col items-center justify-center text-center overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-30 z-0"
+          style={{ backgroundImage: "url('/hero.jpg')" }}
         />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div className="relative z-10 space-y-4">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            className="text-5xl text-white md:text-7xl font-bold"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Zulfiqar & Yurin
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 1 }}
+            className="text-xl text-white md:text-2xl"
           >
-            Read our docs
-          </a>
+            7 September, 2025
+          </motion.p>
+          <Countdown targetDate="2025-08-28T00:00:00" />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      </section>
+
+      {/* Our Story */}
+      <section className="py-20 px-4 bg-gray-50 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="max-w-xl mx-auto"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <h2 className="text-3xl font-semibold mb-4">Our Story</h2>
+          <p className="text-gray-600">
+            Cerita singkat tentang kita, pertemuan, momen spesial, dan perjalanan menuju hari ini...
+          </p>
+        </motion.div>
+      </section>
+
+      {/* Event Details */}
+      <section className="py-20 px-4 bg-white text-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="max-w-md mx-auto space-y-4"
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <h2 className="text-3xl font-semibold">Details</h2>
+          <div>
+            <p><strong>📅 Ceremony:</strong> 7 September, 2025 — 10:00 AM</p>
+            <p><strong>📍 Venue:</strong> Gedung Serba Guna, Purwokerto</p>
+          </div>
+          <div id="map" className="h-64 w-full bg-gray-200">[Peta bisa ditambahkan]</div>
+        </motion.div>
+      </section>
+
+      {/* Gallery */}
+      <section className="py-20 px-4 bg-gray-50 text-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="mb-8"
         >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          <h2 className="text-3xl font-semibold">Gallery</h2>
+        </motion.div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+          {["/galeri1.jpg", "/galeri2.jpg", "/galeri3.jpg"].map((src, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: idx * 0.2 }}
+            >
+              <Image
+                src={src}
+                width={200}
+                height={200}
+                alt={`Gallery ${idx + 1}`}
+                className="w-full h-64 object-cover rounded shadow-lg"
+              />
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* RSVP */}
+      <section className="py-20 px-4 bg-white text-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="max-w-lg mx-auto"
+        >
+          <h2 className="text-3xl font-semibold mb-4">RSVP</h2>
+          <form className="space-y-4">
+            <input
+              type="text"
+              placeholder="Nama"
+              className="w-full border p-3 rounded"
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              className="w-full border p-3 rounded"
+            />
+            <button
+              type="submit"
+              className="px-6 py-3 bg-pink-500 text-white rounded"
+            >
+              Kirim
+            </button>
+          </form>
+        </motion.div>
+      </section>
+    </main>
   );
 }
