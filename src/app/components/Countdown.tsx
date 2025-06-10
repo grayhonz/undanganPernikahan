@@ -24,7 +24,7 @@ export default function Countdown({ targetDate }: Props) {
   return (
     <div className="flex justify-center space-x-4 mt-4 text-lg">
       {["Days", "Hours", "Minutes", "Seconds"].map((label, idx) => (
-        <div key={idx} className="px-3 py-2 bg-white bg-opacity-50 rounded">
+        <div key={idx} className="px-3 py-2 bg-white text-black bg-opacity-50 rounded">
           <div className="font-semibold text-xl">
             {[days, hrs, mins, secs][idx].toString().padStart(2, '0')}
           </div>
