@@ -3,10 +3,79 @@
 import { motion } from "framer-motion";
 import Countdown from "./components/Countdown";
 import Image from "next/image";
+import { useEffect, useState, useRef } from "react";
+import { useSearchParams } from "next/navigation";
+
 
 export default function Home() {
+  const searchParams = useSearchParams();
+  const guestName = searchParams.get("to");
+
+  const [showModal, setShowModal] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const handleTogglePlay = () => {
+  if (isPlaying) {
+    audioRef.current?.pause();
+    setIsPlaying(false);
+  } else {
+    audioRef.current?.play();
+    setIsPlaying(true);
+    setShowModal(false);
+  }
+};
+
+  useEffect(() => {
+    const currentAudio = audioRef.current;
+    return () => {
+      currentAudio?.pause();
+    };
+  }, []);
+
   return (
-    <main className="font-serif text-gray-800">
+    <main className="font-serif text-gray-800 relative">
+      {/* Modal Musik */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center space-y-4 max-w-sm mx-4">
+            {guestName && (
+              <h2 className="text-lg font-medium text-gray-700">
+                Kepada Yth. {guestName}
+              </h2>
+            )}
+            <h3 className="text-xl font-semibold">Selamat Datang</h3>
+            <p className="text-gray-600 text-sm">
+              Aktifkan musik untuk pengalaman undangan yang lebih menyentuh hati.
+            </p>
+            <button
+              onClick={handleTogglePlay}
+              className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition"
+            >
+              Putar Musik
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Audio tersembunyi */}
+      <audio ref={audioRef} loop>
+        <source src="/music.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+
+      {/* Tombol pause musik */}
+      {!showModal && (
+        <button
+          onClick={handleTogglePlay}
+          className="fixed bottom-4 right-4 bg-pink-500 text-white p-3 rounded-full shadow-lg hover:bg-pink-600 z-40"
+          title={isPlaying ? "Jeda Musik" : "Putar Musik"}
+        >
+          {isPlaying ? "⏸️" : "▶️"}
+        </button>
+      )}
+
+
       {/* Hero Section */}
       <section
         className="relative h-screen flex flex-col items-center justify-center text-center bg-fixed bg-cover bg-center"
