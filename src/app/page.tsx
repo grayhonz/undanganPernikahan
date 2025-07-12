@@ -213,7 +213,7 @@ function HomeContent() {
           </div>
           <div className="mt-6 h-64 w-full rounded-lg overflow-hidden shadow">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.9445784688753!2d109.35256671475536!3d-7.350220094723738!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6ff7a90ca97eb5%3A0xadc380ccf34bdf1a!2sBale%20Joglo%20Purbalingga!5e0!3m2!1sen!2sid!4v1625847562000!5m2!1sen!2sid"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.9445784688753!2d109.35375!3d-7.349953!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwMjAnNTkuOCJTIDEwOcKwMjEnMTMuNSJF!5e0!3m2!1sen!2sid!4v1625847562000!5m2!1sen!2sid"
               width="100%"
               height="100%"
               style={{ border: 0 }}
