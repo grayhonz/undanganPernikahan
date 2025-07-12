@@ -209,13 +209,19 @@ function HomeContent() {
           </h2>
           <div className="bg-white rounded-lg shadow-md p-6 space-y-4 text-gray-700">
             <p><strong>📅 Ceremony:</strong> 7 September 2025 — 10:00 AM</p>
-            <p><strong>📍 Venue:</strong> Gedung Serba Guna, Purwokerto</p>
+            <p><strong>📍 Venue:</strong> Bale Joglo Purbalingga</p>
           </div>
           <div className="mt-6 h-64 w-full rounded-lg overflow-hidden shadow">
-            {/* Tambahkan iframe Maps nanti */}
-            <div className="h-full w-full bg-gray-200 flex items-center justify-center italic text-gray-500">
-              [Peta akan ditampilkan di sini]
-            </div>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.9445784688753!2d109.35256671475536!3d-7.350220094723738!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6ff7a90ca97eb5%3A0xadc380ccf34bdf1a!2sBale%20Joglo%20Purbalingga!5e0!3m2!1sen!2sid!4v1625847562000!5m2!1sen!2sid"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Lokasi Pernikahan - Bale Joglo Purbalingga"
+            />
           </div>
         </motion.div>
       </section>
