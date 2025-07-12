@@ -3,38 +3,97 @@
 import { motion } from "framer-motion";
 import Countdown from "./components/Countdown";
 import Image from "next/image";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-
-export default function Home() {
+// Komponen terpisah untuk handle search params
+function GuestNameHandler({ onGuestName }: { onGuestName: (name: string | null) => void }) {
   const searchParams = useSearchParams();
-  const guestName = searchParams.get("to");
+  
+  useEffect(() => {
+    const guestName = searchParams.get("to");
+    onGuestName(guestName);
+  }, [searchParams, onGuestName]);
+  
+  return null;
+}
 
+function HomeContent() {
+  const [guestName, setGuestName] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [audioLoaded, setAudioLoaded] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const handleTogglePlay = () => {
-  if (isPlaying) {
-    audioRef.current?.pause();
-    setIsPlaying(false);
-  } else {
-    audioRef.current?.play();
-    setIsPlaying(true);
-    setShowModal(false);
-  }
-};
+  const handleGuestName = (name: string | null) => {
+    setGuestName(name);
+  };
+
+  const handleTogglePlay = async () => {
+    if (!audioRef.current) return;
+
+    try {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        // Pastikan audio sudah loaded
+        if (audioRef.current.readyState < 2) {
+          await new Promise((resolve) => {
+            if (audioRef.current) {
+              audioRef.current.addEventListener('canplaythrough', resolve, { once: true });
+            }
+          });
+        }
+        
+        await audioRef.current.play();
+        setIsPlaying(true);
+        setShowModal(false);
+      }
+    } catch (error) {
+      console.error('Error playing audio:', error);
+      // Fallback jika audio tidak bisa diputar
+      setShowModal(false);
+    }
+  };
 
   useEffect(() => {
-    const currentAudio = audioRef.current;
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleCanPlay = () => {
+      setAudioLoaded(true);
+    };
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+    };
+
+    const handleError = (e: Event) => {
+      console.error('Audio error:', e);
+      setAudioLoaded(false);
+    };
+
+    audio.addEventListener('canplaythrough', handleCanPlay);
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+
+    // Preload audio
+    audio.load();
+
     return () => {
-      currentAudio?.pause();
+      audio.removeEventListener('canplaythrough', handleCanPlay);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
+      audio.pause();
     };
   }, []);
 
   return (
     <main className="font-serif text-gray-800 relative">
+      {/* Guest Name Handler */}
+      <GuestNameHandler onGuestName={handleGuestName} />
+
       {/* Modal Musik */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center">
@@ -48,33 +107,47 @@ export default function Home() {
             <p className="text-gray-600 text-sm">
               Aktifkan musik untuk pengalaman undangan yang lebih menyentuh hati.
             </p>
-            <button
-              onClick={handleTogglePlay}
-              className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition"
-            >
-              Putar Musik
-            </button>
+            <div className="space-y-2">
+              <button
+                onClick={handleTogglePlay}
+                disabled={!audioLoaded}
+                className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {!audioLoaded ? 'Memuat...' : 'Putar Musik'}
+              </button>
+              <button
+                onClick={() => setShowModal(false)}
+                className="block mx-auto text-gray-500 text-sm hover:text-gray-700"
+              >
+                Lewati
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* Audio tersembunyi */}
-      <audio ref={audioRef} loop>
+      <audio 
+        ref={audioRef} 
+        loop 
+        preload="auto"
+        playsInline
+      >
         <source src="/music.mp3" type="audio/mpeg" />
+        <source src="/music.ogg" type="audio/ogg" />
         Your browser does not support the audio element.
       </audio>
 
       {/* Tombol pause musik */}
-      {!showModal && (
+      {!showModal && audioLoaded && (
         <button
           onClick={handleTogglePlay}
-          className="fixed bottom-4 right-4 bg-pink-500 text-white p-3 rounded-full shadow-lg hover:bg-pink-600 z-40"
+          className="fixed bottom-4 right-4 bg-pink-500 text-white p-3 rounded-full shadow-lg hover:bg-pink-600 z-40 transition-all duration-200"
           title={isPlaying ? "Jeda Musik" : "Putar Musik"}
         >
           {isPlaying ? "⏸️" : "▶️"}
         </button>
       )}
-
 
       {/* Hero Section */}
       <section
@@ -208,6 +281,7 @@ export default function Home() {
           </form>
         </motion.div>
       </section>
+
       {/* Groom & Bride */}
       <section className="py-20 bg-white text-center">
         <motion.div
@@ -271,7 +345,14 @@ export default function Home() {
           </button>
         </motion.div>
       </section>
-
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
