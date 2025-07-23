@@ -88,7 +88,7 @@ function HomeContent() {
       // Tampilkan popup selama 2 detik
       const timeoutId = setTimeout(() => {
         setShowPopup(false);
-      }, 2000);
+      }, 7000);
       return () => clearTimeout(timeoutId);
     }
   }, [audioLoaded]);
