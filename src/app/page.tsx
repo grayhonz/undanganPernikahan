@@ -6,7 +6,7 @@ import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Modal from "./components/Modal";
 
-// Komponen terpisah untuk handle search params
+// Komponen terpisah untuk handle search params (guest name)
 function GuestNameHandler({ onGuestName }: { onGuestName: (name: string | null) => void }) {
   const searchParams = useSearchParams();
   useEffect(() => {
@@ -17,6 +17,28 @@ function GuestNameHandler({ onGuestName }: { onGuestName: (name: string | null) 
 }
 
 function HomeContent() {
+  // === CHANGES START ===
+  // Ambil event dari query (?event=3031 or ?event=7)
+  const searchParams = useSearchParams();
+  const eventCode = searchParams.get("event");
+
+  // Default: Akad 7 September
+  let eventDate = "2025-09-07T11:00:00";
+  let eventLabel = "7 September 2025 — 11:00 WIB";
+  let eventVenue = "Bale Joglo Purbalingga";
+  let eventMap =
+    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.9445784688753!2d109.35375!3d-7.349953!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwMjAnNTkuOCJTIDEwOcKwMjEnMTMuNSJF!5e0!3m2!1sen!2sid!4v1625847562000!5m2!1sen!2sid";
+
+  // Jika ?event=3031 → Resepsi 30–31 Agustus (Toko Kesih)
+  if (eventCode === "3031") {
+    eventDate = "2025-08-30T10:00:00";
+    eventLabel = "30–31 Agustus 2025 — 10:00 WIB";
+    eventVenue = "Toko Kesih";
+    eventMap =
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.260170243614!2d109.3656595!3d-7.3032875!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6ff7650c8e0f77%3A0x3f58631a3b9798bc!2sToko%20Kesih!5e0!3m2!1sen!2sid!4v1723976400000!5m2!1sen!2sid";
+  }
+  // === CHANGES END ===
+
   const [guestName, setGuestName] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -35,11 +57,10 @@ function HomeContent() {
         audioRef.current.pause();
         setIsPlaying(false);
       } else {
-        // Pastikan audio sudah loaded
         if (audioRef.current.readyState < 2) {
           await new Promise((resolve) => {
             if (audioRef.current) {
-              audioRef.current.addEventListener('canplaythrough', resolve, { once: true });
+              audioRef.current.addEventListener("canplaythrough", resolve, { once: true });
             }
           });
         }
@@ -47,8 +68,7 @@ function HomeContent() {
         setIsPlaying(true);
       }
     } catch (error) {
-      console.error('Error playing audio:', error);
-      // Fallback jika audio tidak bisa diputar
+      console.error("Error playing audio:", error);
       setIsPlaying(false);
     }
   };
@@ -56,39 +76,29 @@ function HomeContent() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    const handleCanPlay = () => {
-      setAudioLoaded(true);
-    };
-    const handleEnded = () => {
-      setIsPlaying(false);
-    };
+    const handleCanPlay = () => setAudioLoaded(true);
+    const handleEnded = () => setIsPlaying(false);
     const handleError = (e: Event) => {
-      console.error('Audio error:', e);
+      console.error("Audio error:", e);
       setAudioLoaded(false);
     };
-    audio.addEventListener('canplaythrough', handleCanPlay);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('error', handleError);
-    // Preload audio
+    audio.addEventListener("canplaythrough", handleCanPlay);
+    audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("error", handleError);
     audio.load();
     return () => {
-      audio.removeEventListener('canplaythrough', handleCanPlay);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('error', handleError);
+      audio.removeEventListener("canplaythrough", handleCanPlay);
+      audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("error", handleError);
       audio.pause();
     };
   }, []);
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
+  const handleCloseModal = () => setShowModal(false);
 
   useEffect(() => {
     if (audioLoaded) {
-      // Tampilkan popup selama 2 detik
-      const timeoutId = setTimeout(() => {
-        setShowPopup(false);
-      }, 7000);
+      const timeoutId = setTimeout(() => setShowPopup(false), 7000);
       return () => clearTimeout(timeoutId);
     }
   }, [audioLoaded]);
@@ -99,26 +109,16 @@ function HomeContent() {
       <GuestNameHandler onGuestName={handleGuestName} />
 
       {/* Modal untuk Nama Tamu */}
-      {showModal && (
-        <Modal
-          guestName={guestName || "Tamu"}
-          onClose={handleCloseModal}
-        />
-      )}
+      {showModal && <Modal guestName={guestName || "Tamu"} onClose={handleCloseModal} />}
 
-      {/* Audio tersembunyi */}
-      <audio 
-        ref={audioRef} 
-        loop 
-        preload="auto"
-        playsInline
-      >
+      {/* Audio */}
+      <audio ref={audioRef} loop preload="auto" playsInline>
         <source src="/music.mp3" type="audio/mpeg" />
         <source src="/music.ogg" type="audio/ogg" />
         Your browser does not support the audio element.
       </audio>
 
-      {/* Popup untuk menginformasikan play audio */}
+      {/* Popup Play */}
       {audioLoaded && showPopup && (
         <motion.div
           className="fixed bottom-4 right-4 bg-pink-500 text-white p-3 rounded-full shadow-lg z-40"
@@ -134,7 +134,7 @@ function HomeContent() {
         </motion.div>
       )}
 
-      {/* Tombol pause musik */}
+      {/* Tombol Pause/Play */}
       {audioLoaded && !showPopup && (
         <button
           onClick={handleTogglePlay}
@@ -163,22 +163,26 @@ function HomeContent() {
               >
                 Zulfiqar & Yurin
               </motion.h1>
+
+              {/* === CHANGES START === */}
+              {/* Label tanggal dinamis sesuai event + countdown sesuai event */}
               <motion.p
                 className="text-xl md:text-2xl"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8, duration: 1 }}
               >
-                7 September 2025
+                {eventLabel}
               </motion.p>
-              <Countdown targetDate="2025-09-07T00:00:00" />
+              <Countdown targetDate={eventDate} />
+              {/* === CHANGES END === */}
+
               <div className="mt-8 animate-bounce text-white text-2xl">↓</div>
             </div>
           </section>
 
           {/* Groom & Bride */}
           <section className="relative py-20 bg-white text-center overflow-hidden">
-            {/* Background wayang kiri miring dan bergeser ke kanan */}
             <br />
             <br />
             <div className="absolute top-1/3 left-0 z-0 opacity-10 transform rotate-[45deg] scale-[1.5] -translate-x-10 translate-y-12 pointer-events-none">
@@ -187,8 +191,7 @@ function HomeContent() {
                 alt="Wayang Background"
                 width={500}
                 height={800}
-                objectFit="contain"
-                className="w-full h-auto"
+                className="w-full h-auto object-contain"
               />
             </div>
             <motion.div
@@ -226,13 +229,11 @@ function HomeContent() {
               transition={{ duration: 1 }}
               className="max-w-2xl mx-auto"
             >
-              <h2 className="text-3xl font-semibold font-playfair mb-2">
-                Our Story
-              </h2>
+              <h2 className="text-3xl font-semibold font-playfair mb-2">Our Story</h2>
               <div className="w-24 h-1 mx-auto bg-pink-300 mb-6 rounded" />
               <p className="text-gray-600 leading-loose text-lg">
                 Cerita kami dimulai di tahun 2004, kami tumbuh di gang kecil yang sama. Bermain kejar-kejaran dan saling tertawa.
-                dua tahun setelahnya, ditahun 2006 waktu membawa kami berpisah sejenak untuk menyelesaikan pendidikan, membuat kami terbiasa menjalani kehidupan masing-masing tanpa ada lagi pertemuan, namun ternyata semesta selalu memiliki jalan yang indah. <br /> 
+                dua tahun setelahnya, ditahun 2006 waktu membawa kami berpisah sejenak untuk menyelesaikan pendidikan, membuat kami terbiasa menjalani kehidupan masing-masing tanpa ada lagi pertemuan, namun ternyata semesta selalu memiliki jalan yang indah. <br />
                 <br />
                 18 tahun berlalu, tepatnya di bulan Desember 2024 tawa masa kecil itu kembali hadir, dengan sorot mata indah yang masih sama. Sejak saat itu
                 semua kenangan masa kecil kami kembali bernyawa. Cinta sejati tidak datang secara tiba-tiba, ia tumbuh perlahan dan mekar diwaktu yang tepat. Kami menyadari bahwa
@@ -241,31 +242,24 @@ function HomeContent() {
             </motion.div>
           </section>
 
-          {/* Event Details */}
+          {/* Wedding Details (dinamis sesuai event) */}
           <section className="py-20 bg-gray-50 text-center">
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 1 }}
-              className="max-w-2xl mx-auto"
-            >
-              <h2 className="text-3xl font-semibold font-playfair mb-4">
-                Wedding Details
-              </h2>
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1 }} className="max-w-2xl mx-auto">
+              <h2 className="text-3xl font-semibold font-playfair mb-4">Wedding Details</h2>
               <div className="bg-white rounded-lg shadow-md p-6 space-y-4 text-gray-700">
-                <p><strong>📅 Ceremony:</strong> 7 September 2025 — 11:00 WIB</p>
-                <p><strong>📍 Venue:</strong> Bale Joglo Purbalingga</p>
+                <p><strong>📅 Ceremony:</strong> {eventLabel}</p>
+                <p><strong>📍 Venue:</strong> {eventVenue}</p>
               </div>
               <div className="mt-6 h-64 w-full rounded-lg overflow-hidden shadow">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.9445784688753!2d109.35375!3d-7.349953!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwMjAnNTkuOCJTIDEwOcKwMjEnMTMuNSJF!5e0!3m2!1sen!2sid!4v1625847562000!5m2!1sen!2sid"
+                  src={eventMap}
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="Lokasi Pernikahan - Bale Joglo Purbalingga"
+                  title="Lokasi Acara"
                 />
               </div>
             </motion.div>
@@ -283,7 +277,17 @@ function HomeContent() {
               <div className="w-24 h-1 mx-auto bg-pink-300 mt-2 mb-6 rounded" />
             </motion.div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto px-4">
-              {["/APJC0051.jpg", "/APJC0062.jpg", "/APJC0188.jpg", "/APJC0214.jpg", "/APJC0237.jpg", "/APJC0248.jpg", "/APJC0338.jpg", "/APJC0370.jpg", "/APJC9765.jpg"].map((src, idx) => (
+              {[
+                "/APJC0051.jpg",
+                "/APJC0062.jpg",
+                "/APJC0188.jpg",
+                "/APJC0214.jpg",
+                "/APJC0237.jpg",
+                "/APJC0248.jpg",
+                "/APJC0338.jpg",
+                "/APJC0370.jpg",
+                "/APJC9765.jpg",
+              ].map((src, idx) => (
                 <motion.div
                   key={idx}
                   className="overflow-hidden rounded-lg shadow-lg"
@@ -304,7 +308,10 @@ function HomeContent() {
           </section>
 
           {/* Celebrate Our Love */}
-          <section className="relative h-[70vh] bg-cover bg-center flex items-center justify-center" style={{ backgroundImage: "url('./background1.jpg')" }}>
+          <section
+            className="relative h-[70vh] bg-cover bg-center flex items-center justify-center"
+            style={{ backgroundImage: "url('./background1.jpg')" }}
+          >
             <div className="absolute inset-0 bg-black/50" />
             <motion.div
               initial={{ opacity: 0 }}
