@@ -5,8 +5,9 @@ import Image from "next/image";
 import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Modal from "./components/Modal";
+import Masonry from "react-masonry-css";
 
-// Komponen terpisah untuk handle search params (guest name)
+// Handler nama tamu
 function GuestNameHandler({ onGuestName }: { onGuestName: (name: string | null) => void }) {
   const searchParams = useSearchParams();
   useEffect(() => {
@@ -17,19 +18,16 @@ function GuestNameHandler({ onGuestName }: { onGuestName: (name: string | null) 
 }
 
 function HomeContent() {
-  // === CHANGES START ===
-  // Ambil event dari query (?event=3031 or ?event=7)
+  // === Ambil Event ===
   const searchParams = useSearchParams();
   const eventCode = searchParams.get("event");
 
-  // Default: Akad 7 September
   let eventDate = "2025-09-07T11:00:00";
   let eventLabel = "7 September 2025 — 11:00 WIB";
   let eventVenue = "Bale Joglo Purbalingga";
   let eventMap =
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.9445784688753!2d109.35375!3d-7.349953!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwMjAnNTkuOCJTIDEwOcKwMjEnMTMuNSJF!5e0!3m2!1sen!2sid!4v1625847562000!5m2!1sen!2sid";
 
-  // Jika ?event=3031 → Resepsi 30–31 Agustus (Toko Kesih)
   if (eventCode === "3031") {
     eventDate = "2025-08-30T10:00:00";
     eventLabel = "30–31 Agustus 2025 — 10:00 WIB";
@@ -37,8 +35,8 @@ function HomeContent() {
     eventMap =
       "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.260170243614!2d109.3656595!3d-7.3032875!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6ff7650c8e0f77%3A0x3f58631a3b9798bc!2sToko%20Kesih!5e0!3m2!1sen!2sid!4v1723976400000!5m2!1sen!2sid";
   }
-  // === CHANGES END ===
 
+  // === State ===
   const [guestName, setGuestName] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -46,10 +44,9 @@ function HomeContent() {
   const [showPopup, setShowPopup] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const handleGuestName = (name: string | null) => {
-    setGuestName(name);
-  };
+  const handleGuestName = (name: string | null) => setGuestName(name);
 
+  // Musik
   const handleTogglePlay = async () => {
     if (!audioRef.current) return;
     try {
@@ -103,19 +100,32 @@ function HomeContent() {
     }
   }, [audioLoaded]);
 
+  // === Gallery Images ===
+  const galleryImages = [
+    "/APJC0051.jpg",
+    "/APJC0062.jpg",
+    "/APJC0188.jpg",
+    "/APJC0214.jpg",
+    "/APJC0237.jpg",
+    "/APJC0248.jpg",
+    "/APJC0338.jpg",
+    "/APJC0370.jpg",
+    "/APJC9765.jpg",
+  ];
+
   return (
     <main className="font-serif text-gray-800 relative">
       {/* Guest Name Handler */}
       <GuestNameHandler onGuestName={handleGuestName} />
 
-      {/* Modal untuk Nama Tamu */}
+      {/* Modal Tamu */}
       {showModal && <Modal guestName={guestName || "Tamu"} onClose={handleCloseModal} />}
 
-      {/* Audio */}
+      {/* Musik */}
       <audio ref={audioRef} loop preload="auto" playsInline>
         <source src="/music.mp3" type="audio/mpeg" />
         <source src="/music.ogg" type="audio/ogg" />
-        Your browser does not support the audio element.
+        Browser tidak mendukung audio
       </audio>
 
       {/* Popup Play */}
@@ -134,7 +144,7 @@ function HomeContent() {
         </motion.div>
       )}
 
-      {/* Tombol Pause/Play */}
+      {/* Tombol Musik */}
       {audioLoaded && !showPopup && (
         <button
           onClick={handleTogglePlay}
@@ -145,10 +155,10 @@ function HomeContent() {
         </button>
       )}
 
-      {/* Konten Utama */}
+      {/* Konten */}
       {!showModal && (
         <>
-          {/* Hero Section */}
+          {/* Hero */}
           <section
             className="relative h-screen flex flex-col items-center justify-center text-center bg-fixed bg-cover bg-center"
             style={{ backgroundImage: "url('/galeri1.jpg')" }}
@@ -163,9 +173,6 @@ function HomeContent() {
               >
                 Zulfiqar & Yurin
               </motion.h1>
-
-              {/* === CHANGES START === */}
-              {/* Label tanggal dinamis sesuai event + countdown sesuai event */}
               <motion.p
                 className="text-xl md:text-2xl"
                 initial={{ opacity: 0 }}
@@ -175,16 +182,12 @@ function HomeContent() {
                 {eventLabel}
               </motion.p>
               <Countdown targetDate={eventDate} />
-              {/* === CHANGES END === */}
-
               <div className="mt-8 animate-bounce text-white text-2xl">↓</div>
             </div>
           </section>
 
           {/* Groom & Bride */}
           <section className="relative py-20 bg-white text-center overflow-hidden">
-            <br />
-            <br />
             <div className="absolute top-1/3 left-0 z-0 opacity-10 transform rotate-[45deg] scale-[1.5] -translate-x-10 translate-y-12 pointer-events-none">
               <Image
                 src="/wayang.png"
@@ -207,14 +210,14 @@ function HomeContent() {
                   <Image src="/groom.jpg" alt="Zulfiqar" width={400} height={400} className="rounded-full mx-auto" />
                   <h3 className="text-xl font-semibold">Zulfiqar</h3>
                   <p className="text-gray-600 text-sm max-w-sm mx-auto">
-                    Sosok pria yang penuh semangat, penyayang, dan selalu membawa keceriaan. Dengan hati yang mantap, ia memilih Yurin sebagai pendamping hidupnya.
+                    Sosok pria penuh semangat, penyayang, dan selalu membawa keceriaan. Dengan hati mantap, ia memilih Yurin sebagai pendamping hidupnya.
                   </p>
                 </div>
                 <div className="space-y-4">
                   <Image src="/bride.jpg" alt="Yurin" width={400} height={400} className="rounded-full mx-auto" />
                   <h3 className="text-xl font-semibold">Yurin</h3>
                   <p className="text-gray-600 text-sm max-w-sm mx-auto">
-                    Wanita yang lembut, penyabar, dan penuh kasih. Senyumannya telah merebut hati Zulfiqar dan membawa mereka menuju hari bahagia.
+                    Wanita lembut, penyabar, penuh kasih. Senyumannya merebut hati Zulfiqar dan membawa mereka ke hari bahagia.
                   </p>
                 </div>
               </div>
@@ -232,17 +235,14 @@ function HomeContent() {
               <h2 className="text-3xl font-semibold font-playfair mb-2">Our Story</h2>
               <div className="w-24 h-1 mx-auto bg-pink-300 mb-6 rounded" />
               <p className="text-gray-600 leading-loose text-lg">
-                Cerita kami dimulai di tahun 2004, kami tumbuh di gang kecil yang sama. Bermain kejar-kejaran dan saling tertawa.
-                dua tahun setelahnya, ditahun 2006 waktu membawa kami berpisah sejenak untuk menyelesaikan pendidikan, membuat kami terbiasa menjalani kehidupan masing-masing tanpa ada lagi pertemuan, namun ternyata semesta selalu memiliki jalan yang indah. <br />
-                <br />
-                18 tahun berlalu, tepatnya di bulan Desember 2024 tawa masa kecil itu kembali hadir, dengan sorot mata indah yang masih sama. Sejak saat itu
-                semua kenangan masa kecil kami kembali bernyawa. Cinta sejati tidak datang secara tiba-tiba, ia tumbuh perlahan dan mekar diwaktu yang tepat. Kami menyadari bahwa
-                cinta tak selalu datang dari jauh, terkadang ia telah ada di depan mata membersamai sejak lama.
+                Cerita kami dimulai di tahun 2004, kami tumbuh di gang kecil yang sama. Bermain kejar-kejaran dan tertawa bersama. 
+                Tahun 2006 kami berpisah untuk sekolah, hingga 18 tahun kemudian dipertemukan kembali di akhir 2024. 
+                Sejak itu cinta tumbuh kembali, mekar di waktu yang tepat.
               </p>
             </motion.div>
           </section>
 
-          {/* Wedding Details (dinamis sesuai event) */}
+          {/* Wedding Details */}
           <section className="py-20 bg-gray-50 text-center">
             <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1 }} className="max-w-2xl mx-auto">
               <h2 className="text-3xl font-semibold font-playfair mb-4">Wedding Details</h2>
@@ -265,45 +265,36 @@ function HomeContent() {
             </motion.div>
           </section>
 
-          {/* Gallery */}
+          {/* Gallery (Masonry) */}
           <section className="py-20 bg-white text-center">
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 1 }}
-              className="mb-10"
-            >
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1 }} className="mb-10">
               <h2 className="text-3xl font-semibold font-playfair">Gallery</h2>
               <div className="w-24 h-1 mx-auto bg-pink-300 mt-2 mb-6 rounded" />
             </motion.div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto px-4">
-              {[
-                "/APJC0051.jpg",
-                "/APJC0062.jpg",
-                "/APJC0188.jpg",
-                "/APJC0214.jpg",
-                "/APJC0237.jpg",
-                "/APJC0248.jpg",
-                "/APJC0338.jpg",
-                "/APJC0370.jpg",
-                "/APJC9765.jpg",
-              ].map((src, idx) => (
-                <motion.div
-                  key={idx}
-                  className="overflow-hidden rounded-lg shadow-lg"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                >
-                  <Image
-                    src={src}
-                    alt={`Gallery ${idx + 1}`}
-                    width={500}
-                    height={300}
-                    className="w-full h-64 object-cover transition-transform duration-300 hover:scale-105"
-                  />
-                </motion.div>
-              ))}
+            <div className="max-w-6xl mx-auto px-4">
+              <Masonry
+                breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
+                className="flex gap-4"
+                columnClassName="flex flex-col gap-4"
+              >
+                {galleryImages.map((src, idx) => (
+                  <motion.div
+                    key={idx}
+                    className="overflow-hidden rounded-xl shadow-lg"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  >
+                    <Image
+                      src={src}
+                      alt={`Gallery ${idx + 1}`}
+                      width={600}
+                      height={800}
+                      className="w-full h-auto object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                  </motion.div>
+                ))}
+              </Masonry>
             </div>
           </section>
 
@@ -321,7 +312,7 @@ function HomeContent() {
             >
               <h2 className="text-4xl md:text-5xl font-playfair font-bold mb-4">Celebrate Our Love</h2>
               <p className="max-w-2xl mx-auto text-lg">
-                Kami mengundang Anda untuk menjadi bagian dari momen bahagia kami saat kami mengikat janji suci dalam ikatan pernikahan.
+                Kami mengundang Anda untuk menjadi bagian dari momen bahagia kami saat kami mengikat janji suci pernikahan.
               </p>
             </motion.div>
           </section>
