@@ -237,9 +237,7 @@ function HomeContent() {
               <h2 className="text-3xl font-semibold font-playfair mb-2">Our Story</h2>
               <div className="w-24 h-1 mx-auto bg-pink-300 mb-6 rounded" />
               <p className="text-gray-600 leading-loose text-lg">
-                Cerita kami dimulai di tahun 2004, kami tumbuh di gang kecil yang sama. Bermain kejar-kejaran dan tertawa bersama. 
-                Tahun 2006 kami berpisah untuk sekolah, hingga 18 tahun kemudian dipertemukan kembali di akhir 2024. 
-                Sejak itu cinta tumbuh kembali, mekar di waktu yang tepat.
+Cerita kami dimulai di tahun 2004, kami tumbuh di gang kecil yang sama. Bermain kejar-kejaran dan saling tertawa. dua tahun setelahnya, ditahun 2006 waktu membawa kami berpisah sejenak untuk menyelesaikan pendidikan, membuat kami terbiasa menjalani kehidupan masing-masing tanpa ada lagi pertemuan, namun ternyata semesta selalu memiliki jalan yang indah. <br /> <br /> 18 tahun berlalu, tepatnya di bulan Desember 2024 tawa masa kecil itu kembali hadir, dengan sorot mata indah yang masih sama. Sejak saat itu semua kenangan masa kecil kami kembali bernyawa. Cinta sejati tidak datang secara tiba-tiba, ia tumbuh perlahan dan mekar diwaktu yang tepat. Kami menyadari bahwa cinta tak selalu datang dari jauh, terkadang ia telah ada di depan mata membersamai sejak lama.
               </p>
             </motion.div>
           </section>
