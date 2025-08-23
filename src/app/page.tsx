@@ -166,12 +166,14 @@ function HomeContent() {
             <div className="absolute inset-0 bg-black/20" />
             <div className="relative z-10 text-white space-y-4">
               <motion.h1
-                className="text-5xl md:text-7xl font-playfair font-bold tracking-widest bg-clip-text text-white text-transparent bg-center bg-cover"
+                className="text-5xl md:text-7xl font-playfair font-bold tracking-widest"
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1 }}
               >
-                Zulfiqar & Yurin
+                <span className="block sm:inline">Zulfiqar</span>
+                <span className="block sm:inline mx-2">&</span>
+                <span className="block sm:inline">Yurin</span>
               </motion.h1>
               <motion.p
                 className="text-xl md:text-2xl"
